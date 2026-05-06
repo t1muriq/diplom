@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+{% block title %}Импорт данных{% endblock %}
+
+{% block content %}
+<h2 class="mb-4">Импорт данных</h2>
+
+<div class="row">
+    <div class="col-lg-6">
+        <div class="card">
+            <div class="card-header"><strong>Загрузка файла</strong></div>
+            <div class="card-body">
+                <form method="post" enctype="multipart/form-data">
+                    <div class="mb-3">
+                        <label class="form-label">Целевая таблица</label>
+                        <select name="table" class="form-select" required>
+                            <option value="">— выберите таблицу —</option>
+                            {% for t in tables %}
+                            <option value="{{ t }}">{{ t }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Файл (CSV / XLSX / JSON)</label>
+                        <input type="file" name="file" class="form-control"
+                               accept=".csv,.xlsx,.xls,.json" required>
+                        <div class="form-text">
+                            Максимальный размер файла: 16 МБ.
+                            Структура файла должна соответствовать колонкам таблицы.
+                        </div>
+                    </div>
+                    <button class="btn btn-primary" type="submit">Запустить импорт</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-6">
+        <div class="card">
+            <div class="card-header"><strong>Результат последнего импорта</strong></div>
+            <div class="card-body">
+                {% if result %}
+                <p>
+                    <strong>Статус:</strong>
+                    {% if result.status == 'completed' %}
+                        <span class="badge bg-success">{{ result.status }}</span>
+                    {% else %}
+                        <span class="badge bg-danger">{{ result.status }}</span>
+                    {% endif %}
+                </p>
+                <p><strong>ID операции:</strong> {{ result.import_id }}</p>
+                <p><strong>Загружено строк:</strong> {{ result.rows_loaded }}</p>
+                {% if result.error %}
+                <p class="mb-0"><strong>Ошибка:</strong></p>
+                <pre class="bg-light p-2 small">{{ result.error }}</pre>
+                {% endif %}
+                {% else %}
+                <p class="text-muted mb-0">Здесь появится результат после запуска импорта.</p>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="card mt-3">
+            <div class="card-header"><strong>Подсказка по колонкам</strong></div>
+            <div class="card-body">
+                <p class="small mb-2">Каждый файл должен содержать следующие колонки в первой строке:</p>
+                <ul class="small mb-0">
+                    <li><code>students</code>: last_name, first_name, middle_name, birth_date, class_id, admission_year, student_status</li>
+                    <li><code>teachers</code>: last_name, first_name, middle_name, position_title</li>
+                    <li><code>subjects</code>: subject_name, weekly_hours</li>
+                    <li><code>classrooms</code>: room_number, building, capacity</li>
+                    <li><code>schedule</code>: class_id, subject_id, teacher_id, classroom_id, lesson_date, lesson_number</li>
+                    <li><code>grades</code>: student_id, subject_id, teacher_id, grade_value, grade_date, grade_comment</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

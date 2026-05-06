@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+{% block title %}Дашборд{% endblock %}
+
+{% block content %}
+<h2 class="mb-4">Дашборд</h2>
+
+<div class="row g-3 mb-4">
+    <div class="col-md-3 col-6">
+        <div class="card text-center border-primary">
+            <div class="card-body">
+                <div class="display-6 text-primary">{{ stats.students_total }}</div>
+                <small class="text-muted">Учеников</small>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 col-6">
+        <div class="card text-center border-success">
+            <div class="card-body">
+                <div class="display-6 text-success">{{ stats.teachers_total }}</div>
+                <small class="text-muted">Преподавателей</small>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 col-6">
+        <div class="card text-center border-info">
+            <div class="card-body">
+                <div class="display-6 text-info">{{ stats.classes_total }}</div>
+                <small class="text-muted">Классов</small>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 col-6">
+        <div class="card text-center border-warning">
+            <div class="card-body">
+                <div class="display-6 text-warning">{{ stats.grades_total }}</div>
+                <small class="text-muted">Оценок выставлено</small>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% if metrics %}
+<div class="card mb-4">
+    <div class="card-header">
+        <strong>Метрики СУБД (текущий снимок)</strong>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-6">
+                <p class="mb-1"><strong>Размер БД:</strong>
+                    {{ '%.2f' % (metrics.db_size / 1024 / 1024) }} МБ
+                    <small class="text-muted">({{ metrics.db_size }} байт)</small>
+                </p>
+            </div>
+            <div class="col-md-6">
+                <p class="mb-1"><strong>Активные соединения:</strong>
+                    {{ metrics.active_conn }}
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <strong>Последние события мониторинга</strong>
+        {% if is_admin or is_auditor %}
+        <a class="btn btn-sm btn-outline-primary"
+           href="{{ url_for('monitoring_view') }}">
+            Полный журнал →
+        </a>
+        {% endif %}
+    </div>
+    <div class="card-body p-0">
+        {% if recent_events %}
+        <table class="table table-sm mb-0">
+            <thead>
+                <tr>
+                    <th>Время</th>
+                    <th>Тип события</th>
+                    <th>Описание</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for ev in recent_events %}
+                <tr>
+                    <td><small>{{ ev.event_time.strftime('%Y-%m-%d %H:%M:%S') }}</small></td>
+                    <td>
+                        <span class="badge bg-secondary">{{ ev.event_type }}</span>
+                    </td>
+                    <td>{{ ev.description }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <p class="text-muted p-3 mb-0">Нет данных для отображения.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

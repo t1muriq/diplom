@@ -1,0 +1,44 @@
+DO
+$$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_roles WHERE rolname = 'admin_db') THEN
+        CREATE ROLE admin_db WITH LOGIN PASSWORD 'Admin123!';
+    END IF;
+
+    IF NOT EXISTS (SELECT 1 FROM pg_roles WHERE rolname = 'operator_user') THEN
+        CREATE ROLE operator_user WITH LOGIN PASSWORD 'Operator123!';
+    END IF;
+
+    IF NOT EXISTS (SELECT 1 FROM pg_roles WHERE rolname = 'auditor_user') THEN
+        CREATE ROLE auditor_user WITH LOGIN PASSWORD 'Auditor123!';
+    END IF;
+END
+$$;
+
+GRANT CONNECT ON DATABASE school_1416_db TO admin_db, operator_user, auditor_user;
+
+GRANT USAGE ON SCHEMA public TO admin_db, operator_user, auditor_user;
+GRANT CREATE ON SCHEMA public TO admin_db;
+
+GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO admin_db;
+GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public TO admin_db;
+
+GRANT SELECT, INSERT, UPDATE ON ALL TABLES IN SCHEMA public TO operator_user;
+GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA public TO operator_user;
+
+GRANT SELECT ON ALL TABLES IN SCHEMA public TO auditor_user;
+
+ALTER DEFAULT PRIVILEGES IN SCHEMA public
+GRANT ALL PRIVILEGES ON TABLES TO admin_db;
+
+ALTER DEFAULT PRIVILEGES IN SCHEMA public
+GRANT ALL PRIVILEGES ON SEQUENCES TO admin_db;
+
+ALTER DEFAULT PRIVILEGES IN SCHEMA public
+GRANT SELECT, INSERT, UPDATE ON TABLES TO operator_user;
+
+ALTER DEFAULT PRIVILEGES IN SCHEMA public
+GRANT USAGE, SELECT ON SEQUENCES TO operator_user;
+
+ALTER DEFAULT PRIVILEGES IN SCHEMA public
+GRANT SELECT ON TABLES TO auditor_user;

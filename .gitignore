@@ -1,0 +1,36 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+.venv/
+venv/
+env/
+*.egg-info/
+
+# Local environment / secrets
+.env
+.env.*
+!.env.example
+
+# IDE
+.vscode/
+.idea/
+*.swp
+
+# Тестирование
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Веб-приложение
+web_app/uploads/
+*.log
+
+# Бэкапы (хранятся локально, не в репозитории)
+backup/*.dump
+
+# OS
+.DS_Store
+Thumbs.db

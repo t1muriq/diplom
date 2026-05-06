@@ -1,0 +1,24 @@
+services:
+  postgres:
+    image: postgres:16
+    container_name: school_1416_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: school_1416_db
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: Admin123!
+      LANG: C.UTF-8
+    ports:
+      - "5432:5432"
+    volumes:
+      - school_1416_pgdata:/var/lib/postgresql/data
+      - ./sql:/docker-entrypoint-initdb.d:ro
+      - ./backup:/backup
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U admin -d school_1416_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  school_1416_pgdata:

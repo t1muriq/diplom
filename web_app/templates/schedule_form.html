@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+{% block title %}Изменение расписания{% endblock %}
+
+{% block content %}
+<h2 class="mb-4">Изменить урок</h2>
+
+<div class="card">
+    <div class="card-body">
+        <form class="row g-3" method="post">
+            <div class="col-md-3">
+                <label class="form-label">Дата</label>
+                <input type="date" name="lesson_date" class="form-control"
+                       value="{{ lesson.lesson_date }}" required>
+            </div>
+            <div class="col-md-2">
+                <label class="form-label">Урок №</label>
+                <input type="number" name="lesson_number" class="form-control"
+                       min="1" max="8" value="{{ lesson.lesson_number }}" required>
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">Класс</label>
+                <select name="class_id" class="form-select" required>
+                    {% for c in form_options.classes %}
+                    <option value="{{ c.class_id }}"
+                        {% if c.class_id == lesson.class_id %}selected{% endif %}>
+                        {{ c.class_name }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-4">
+                <label class="form-label">Предмет</label>
+                <select name="subject_id" class="form-select" required>
+                    {% for s in form_options.subjects %}
+                    <option value="{{ s.subject_id }}"
+                        {% if s.subject_id == lesson.subject_id %}selected{% endif %}>
+                        {{ s.subject_name }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-5">
+                <label class="form-label">Преподаватель</label>
+                <select name="teacher_id" class="form-select" required>
+                    {% for t in form_options.teachers %}
+                    <option value="{{ t.teacher_id }}"
+                        {% if t.teacher_id == lesson.teacher_id %}selected{% endif %}>
+                        {{ t.teacher_name }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-4">
+                <label class="form-label">Кабинет</label>
+                <select name="classroom_id" class="form-select" required>
+                    {% for r in form_options.classrooms %}
+                    <option value="{{ r.classroom_id }}"
+                        {% if r.classroom_id == lesson.classroom_id %}selected{% endif %}>
+                        {{ r.classroom_name }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-3 d-flex align-items-end gap-2">
+                <button class="btn btn-success">Сохранить</button>
+                <a class="btn btn-outline-secondary" href="{{ url_for('schedule') }}">Отмена</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<p class="text-muted small mt-3">
+    Если выбранный класс, кабинет или преподаватель уже заняты в это время,
+    PostgreSQL отклонит изменение ограничением целостности.
+</p>
+{% endblock %}

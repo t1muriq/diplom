@@ -1,0 +1,128 @@
+{% extends "base.html" %}
+{% block title %}Оценки{% endblock %}
+
+{% block content %}
+<h2 class="mb-4">Журнал оценок</h2>
+
+{% if is_admin or is_operator %}
+<div class="card mb-4">
+    <div class="card-header bg-white">
+        <strong>Выставить оценку</strong>
+        <span class="text-muted small">триггер запрещает оценки отчисленным ученикам</span>
+    </div>
+    <div class="card-body">
+        <form class="row g-3" method="post">
+            <div class="col-md-4">
+                <label class="form-label">Ученик</label>
+                <select name="student_id" class="form-select" required>
+                    {% for s in form_options.students %}
+                    <option value="{{ s.student_id }}">{{ s.fio }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">Предмет</label>
+                <select name="subject_id" class="form-select" required>
+                    {% for s in form_options.subjects %}
+                    <option value="{{ s.subject_id }}">{{ s.subject_name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">Преподаватель</label>
+                <select name="teacher_id" class="form-select" required>
+                    {% for t in form_options.teachers %}
+                    <option value="{{ t.teacher_id }}">{{ t.teacher_name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-1">
+                <label class="form-label">Оценка</label>
+                <select name="grade_value" class="form-select" required>
+                    <option value="5">5</option>
+                    <option value="4">4</option>
+                    <option value="3">3</option>
+                    <option value="2">2</option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <label class="form-label">Дата</label>
+                <input type="date" name="grade_date" class="form-control" required>
+            </div>
+            <div class="col-md-8">
+                <label class="form-label">Комментарий</label>
+                <input type="text" name="grade_comment" class="form-control"
+                       maxlength="255" placeholder="Например: контрольная работа">
+            </div>
+            <div class="col-md-2 d-flex align-items-end">
+                <button class="btn btn-success w-100">Выставить</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endif %}
+
+<form class="row g-2 mb-3" method="get">
+    <div class="col-md-5">
+        <select name="student_id" class="form-select">
+            <option value="">Все ученики</option>
+            {% for s in students %}
+            <option value="{{ s.student_id }}"
+                {% if student_filter == s.student_id|string %}selected{% endif %}>
+                {{ s.fio }}
+            </option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="col-md-2">
+        <button class="btn btn-primary w-100">Применить</button>
+    </div>
+    <div class="col-md-2">
+        <a class="btn btn-outline-secondary w-100" href="{{ url_for('grades') }}">Сбросить</a>
+    </div>
+</form>
+
+<div class="card">
+    <div class="card-body p-0">
+        <table class="table table-hover mb-0">
+            <thead class="table-light">
+                <tr>
+                    <th>Дата</th>
+                    <th>Класс</th>
+                    <th>Ученик</th>
+                    <th>Предмет</th>
+                    <th>Оценка</th>
+                    <th>Преподаватель</th>
+                    <th>Комментарий</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for r in rows %}
+                <tr>
+                    <td>{{ r.grade_date }}</td>
+                    <td>{{ r.class_name }}</td>
+                    <td>{{ r.student_full_name }}</td>
+                    <td>{{ r.subject_name }}</td>
+                    <td>
+                        {% if r.grade_value == 5 %}
+                        <span class="badge bg-success fs-6">5</span>
+                        {% elif r.grade_value == 4 %}
+                        <span class="badge bg-primary fs-6">4</span>
+                        {% elif r.grade_value == 3 %}
+                        <span class="badge bg-warning fs-6">3</span>
+                        {% else %}
+                        <span class="badge bg-danger fs-6">{{ r.grade_value }}</span>
+                        {% endif %}
+                    </td>
+                    <td>{{ r.teacher_short_name }}</td>
+                    <td><small class="text-muted">{{ r.grade_comment or '' }}</small></td>
+                </tr>
+                {% else %}
+                <tr><td colspan="7" class="text-center text-muted">Ничего не найдено</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+<p class="text-muted small mt-2">Найдено записей: {{ rows|length }} (показано не более 200)</p>
+{% endblock %}

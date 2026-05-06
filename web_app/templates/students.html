@@ -1,0 +1,101 @@
+{% extends "base.html" %}
+{% block title %}Ученики{% endblock %}
+
+{% block content %}
+<h2 class="mb-4">Ученики</h2>
+
+<form class="row g-2 mb-3" method="get">
+    <div class="col-md-4">
+        <input type="text" name="q" class="form-control"
+               placeholder="Поиск по фамилии или имени..."
+               value="{{ search }}">
+    </div>
+    <div class="col-md-3">
+        <select name="class_id" class="form-select">
+            <option value="">Все классы</option>
+            {% for c in classes %}
+            <option value="{{ c.class_id }}"
+                {% if class_filter == c.class_id|string %}selected{% endif %}>
+                {{ c.class_name }}
+            </option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="col-md-2">
+        <button class="btn btn-primary w-100">Применить</button>
+    </div>
+    <div class="col-md-2">
+        <a class="btn btn-outline-secondary w-100"
+           href="{{ url_for('students') }}">Сбросить</a>
+    </div>
+</form>
+
+<div class="card">
+    <div class="card-body p-0">
+        <table class="table table-hover mb-0">
+            <thead class="table-light">
+                <tr>
+                    <th>ID</th>
+                    <th>Фамилия</th>
+                    <th>Имя</th>
+                    <th>Отчество</th>
+                    <th>Класс</th>
+                    <th>Дата рождения</th>
+                    <th>Год поступления</th>
+                    <th>Статус</th>
+                    {% if is_admin %}
+                    <th>Изменить статус</th>
+                    {% endif %}
+                </tr>
+            </thead>
+            <tbody>
+                {% for r in rows %}
+                <tr>
+                    <td>{{ r.student_id }}</td>
+                    <td>{{ r.last_name }}</td>
+                    <td>{{ r.first_name }}</td>
+                    <td>{{ r.middle_name or '—' }}</td>
+                    <td><span class="badge bg-info">{{ r.class_name }}</span></td>
+                    <td>{{ r.birth_date }}</td>
+                    <td>{{ r.admission_year }}</td>
+                    <td>
+                        {% if r.student_status == 'active' %}
+                            <span class="badge bg-success">{{ r.student_status }}</span>
+                        {% elif r.student_status == 'graduated' %}
+                            <span class="badge bg-secondary">{{ r.student_status }}</span>
+                        {% else %}
+                            <span class="badge bg-danger">{{ r.student_status }}</span>
+                        {% endif %}
+                    </td>
+                    {% if is_admin %}
+                    <td>
+                        <form class="d-flex gap-2"
+                              method="post"
+                              action="{{ url_for('update_student_status', student_id=r.student_id) }}">
+                            <select name="student_status" class="form-select form-select-sm">
+                                {% for status in statuses %}
+                                <option value="{{ status }}"
+                                    {% if status == r.student_status %}selected{% endif %}>
+                                    {{ status }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                            <button class="btn btn-sm btn-outline-primary">Сохранить</button>
+                        </form>
+                    </td>
+                    {% endif %}
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="{% if is_admin %}9{% else %}8{% endif %}"
+                        class="text-center text-muted">
+                        Ничего не найдено
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+<p class="text-muted small mt-2">Найдено записей: {{ rows|length }}</p>
+{% endblock %}

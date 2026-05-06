@@ -1,0 +1,133 @@
+{% extends "base.html" %}
+{% block title %}Расписание{% endblock %}
+
+{% block content %}
+<h2 class="mb-4">Расписание занятий</h2>
+
+{% if is_admin or is_operator %}
+<div class="card mb-4">
+    <div class="card-header bg-white">
+        <strong>Добавить урок</strong>
+        <span class="text-muted small">конфликты класса, кабинета и преподавателя проверяет СУБД</span>
+    </div>
+    <div class="card-body">
+        <form class="row g-3" method="post">
+            <div class="col-md-2">
+                <label class="form-label">Дата</label>
+                <input type="date" name="lesson_date" class="form-control" required>
+            </div>
+            <div class="col-md-1">
+                <label class="form-label">Урок</label>
+                <input type="number" name="lesson_number" class="form-control" min="1" max="8" required>
+            </div>
+            <div class="col-md-2">
+                <label class="form-label">Класс</label>
+                <select name="class_id" class="form-select" required>
+                    {% for c in form_options.classes %}
+                    <option value="{{ c.class_id }}">{{ c.class_name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-2">
+                <label class="form-label">Предмет</label>
+                <select name="subject_id" class="form-select" required>
+                    {% for s in form_options.subjects %}
+                    <option value="{{ s.subject_id }}">{{ s.subject_name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">Преподаватель</label>
+                <select name="teacher_id" class="form-select" required>
+                    {% for t in form_options.teachers %}
+                    <option value="{{ t.teacher_id }}">{{ t.teacher_name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-2">
+                <label class="form-label">Кабинет</label>
+                <select name="classroom_id" class="form-select" required>
+                    {% for r in form_options.classrooms %}
+                    <option value="{{ r.classroom_id }}">{{ r.classroom_name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-2">
+                <button class="btn btn-success w-100">Добавить урок</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endif %}
+
+<form class="row g-2 mb-3" method="get">
+    <div class="col-md-3">
+        <input type="date" name="date" class="form-control" value="{{ date_filter }}">
+    </div>
+    <div class="col-md-3">
+        <select name="class_id" class="form-select">
+            <option value="">Все классы</option>
+            {% for c in classes %}
+            <option value="{{ c.class_id }}"
+                {% if class_filter == c.class_id|string %}selected{% endif %}>
+                {{ c.class_name }}
+            </option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="col-md-2">
+        <button class="btn btn-primary w-100">Применить</button>
+    </div>
+    <div class="col-md-2">
+        <a class="btn btn-outline-secondary w-100" href="{{ url_for('schedule') }}">Сбросить</a>
+    </div>
+</form>
+
+<div class="card">
+    <div class="card-body p-0">
+        <table class="table table-hover mb-0">
+            <thead class="table-light">
+                <tr>
+                    <th>Дата</th>
+                    <th>Урок №</th>
+                    <th>Класс</th>
+                    <th>Предмет</th>
+                    <th>Преподаватель</th>
+                    <th>Кабинет</th>
+                    {% if is_admin or is_operator %}
+                    <th>Действия</th>
+                    {% endif %}
+                </tr>
+            </thead>
+            <tbody>
+                {% for r in rows %}
+                <tr>
+                    <td>{{ r.lesson_date }}</td>
+                    <td><span class="badge bg-secondary">{{ r.lesson_number }}</span></td>
+                    <td><strong>{{ r.class_name }}</strong></td>
+                    <td>{{ r.subject_name }}</td>
+                    <td>{{ r.teacher_short_name }}</td>
+                    <td><small>каб. {{ r.room_number }}, {{ r.building }}</small></td>
+                    {% if is_admin or is_operator %}
+                    <td>
+                        <a class="btn btn-sm btn-outline-primary"
+                           href="{{ url_for('edit_schedule', schedule_id=r.schedule_id) }}">
+                            Изменить
+                        </a>
+                    </td>
+                    {% endif %}
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="{% if is_admin or is_operator %}7{% else %}6{% endif %}"
+                        class="text-center text-muted">
+                        Ничего не найдено
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+<p class="text-muted small mt-2">Найдено записей: {{ rows|length }}</p>
+{% endblock %}
