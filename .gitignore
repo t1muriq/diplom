@@ -9,11 +9,6 @@ venv/
 env/
 *.egg-info/
 
-# Local environment / secrets
-.env
-.env.*
-!.env.example
-
 # IDE
 .vscode/
 .idea/

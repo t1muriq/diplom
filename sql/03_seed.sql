@@ -146,3 +146,19 @@ SELECT setval('attendance_attendance_id_seq', (SELECT MAX(attendance_id) FROM at
 SELECT setval('confidential_data_id_seq', (SELECT MAX(id) FROM confidential_data));
 SELECT setval('import_log_import_id_seq', (SELECT MAX(import_id) FROM import_log));
 SELECT setval('monitoring_log_log_id_seq', (SELECT MAX(log_id) FROM monitoring_log));
+
+-- Учётные записи учителей для входа в личный кабинет.
+-- Пароли хранятся как bcrypt-хэши (через crypt() из pgcrypto).
+-- Демо-пароль для всех учителей: Teacher123!
+INSERT INTO teacher_accounts (teacher_id, email, password_hash)
+VALUES
+    (1, 'sidorov@school1416.ru',   crypt('Teacher123!', gen_salt('bf'))),
+    (2, 'smirnova@school1416.ru',  crypt('Teacher123!', gen_salt('bf'))),
+    (3, 'kuznetsov@school1416.ru', crypt('Teacher123!', gen_salt('bf'))),
+    (4, 'orlova@school1416.ru',    crypt('Teacher123!', gen_salt('bf'))),
+    (5, 'nikitin@school1416.ru',   crypt('Teacher123!', gen_salt('bf'))),
+    (6, 'fedorova@school1416.ru',  crypt('Teacher123!', gen_salt('bf'))),
+    (7, 'morozov@school1416.ru',   crypt('Teacher123!', gen_salt('bf')));
+
+SELECT setval('teacher_accounts_account_id_seq',
+              (SELECT MAX(account_id) FROM teacher_accounts));

@@ -6,10 +6,7 @@
 
 {% if is_admin or is_operator %}
 <div class="card mb-4">
-    <div class="card-header bg-white">
-        <strong>Выставить оценку</strong>
-        <span class="text-muted small">триггер запрещает оценки отчисленным ученикам</span>
-    </div>
+    <div class="card-header bg-white"><strong>Выставить оценку</strong></div>
     <div class="card-body">
         <form class="row g-3" method="post">
             <div class="col-md-4">
@@ -49,12 +46,12 @@
                 <label class="form-label">Дата</label>
                 <input type="date" name="grade_date" class="form-control" required>
             </div>
-            <div class="col-md-8">
+            <div class="col-md-9">
                 <label class="form-label">Комментарий</label>
                 <input type="text" name="grade_comment" class="form-control"
                        maxlength="255" placeholder="Например: контрольная работа">
             </div>
-            <div class="col-md-2 d-flex align-items-end">
+            <div class="col-md-3 d-flex align-items-end">
                 <button class="btn btn-success w-100">Выставить</button>
             </div>
         </form>
@@ -105,13 +102,13 @@
                     <td>{{ r.subject_name }}</td>
                     <td>
                         {% if r.grade_value == 5 %}
-                        <span class="badge bg-success fs-6">5</span>
+                            <span class="badge bg-success fs-6">5</span>
                         {% elif r.grade_value == 4 %}
-                        <span class="badge bg-primary fs-6">4</span>
+                            <span class="badge bg-primary fs-6">4</span>
                         {% elif r.grade_value == 3 %}
-                        <span class="badge bg-warning fs-6">3</span>
+                            <span class="badge bg-warning fs-6">3</span>
                         {% else %}
-                        <span class="badge bg-danger fs-6">{{ r.grade_value }}</span>
+                            <span class="badge bg-danger fs-6">{{ r.grade_value }}</span>
                         {% endif %}
                     </td>
                     <td>{{ r.teacher_short_name }}</td>

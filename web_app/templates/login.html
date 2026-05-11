@@ -3,43 +3,90 @@
 
 {% block content %}
 <div class="row justify-content-center">
-    <div class="col-md-5 col-lg-4">
-        <div class="card shadow-sm mt-5">
+    <div class="col-md-6 col-lg-5">
+        <div class="card shadow-sm mt-4">
             <div class="card-body p-4">
-                <h4 class="card-title text-center mb-3">Вход в систему</h4>
-                <p class="text-muted text-center small">
-                    Авторизация выполняется по ролям PostgreSQL
-                </p>
+                <h4 class="card-title text-center mb-4">Вход в систему</h4>
 
-                <form method="post">
-                    <div class="mb-3">
-                        <label class="form-label">Роль (логин)</label>
-                        <select name="username" class="form-select" required>
-                            <option value="">— выберите роль —</option>
-                            <option value="admin_db">admin_db (Администратор БД)</option>
-                            <option value="operator_user">operator_user (Оператор)</option>
-                            <option value="auditor_user">auditor_user (Аудитор)</option>
-                        </select>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Пароль</label>
-                        <input type="password" name="password"
-                               class="form-control" required autofocus>
-                    </div>
-                    <button class="btn btn-primary w-100" type="submit">
-                        Войти
-                    </button>
-                </form>
+                <ul class="nav nav-pills mb-4 justify-content-center" role="tablist">
+                    <li class="nav-item">
+                        <button class="nav-link active" data-bs-toggle="pill"
+                                data-bs-target="#tab-teacher">
+                            Учитель
+                        </button>
+                    </li>
+                    <li class="nav-item">
+                        <button class="nav-link" data-bs-toggle="pill"
+                                data-bs-target="#tab-role">
+                            Технический пользователь
+                        </button>
+                    </li>
+                </ul>
 
-                <hr>
-                <details class="small text-muted">
-                    <summary>Учётные данные по умолчанию</summary>
-                    <ul class="mt-2 mb-0">
-                        <li><code>admin_db</code> / <code>Admin123!</code></li>
-                        <li><code>operator_user</code> / <code>Operator123!</code></li>
-                        <li><code>auditor_user</code> / <code>Auditor123!</code></li>
-                    </ul>
-                </details>
+                <div class="tab-content">
+                    <!-- Вход учителя -->
+                    <div class="tab-pane fade show active" id="tab-teacher">
+                        <form method="post">
+                            <input type="hidden" name="kind" value="teacher">
+                            <div class="mb-3">
+                                <label class="form-label">Email</label>
+                                <input type="email" name="email" class="form-control"
+                                       required placeholder="ivanova@school1416.ru">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Пароль</label>
+                                <input type="password" name="password" class="form-control" required>
+                            </div>
+                            <button class="btn btn-primary w-100" type="submit">Войти</button>
+                        </form>
+                        <details class="small text-muted mt-3">
+                            <summary>Демо-учётки учителей</summary>
+                            <ul class="mt-2 mb-0">
+                                <li><code>sidorov@school1416.ru</code> — Сидоров А. В. (математика)</li>
+                                <li><code>smirnova@school1416.ru</code> — Смирнова Е. С. (русский язык)</li>
+                                <li><code>kuznetsov@school1416.ru</code> — Кузнецов Д. И. (информатика)</li>
+                                <li><code>orlova@school1416.ru</code> — Орлова М. П. (история)</li>
+                                <li><code>nikitin@school1416.ru</code> — Никитин П. А. (физика)</li>
+                                <li><code>fedorova@school1416.ru</code> — Федорова О. М. (англ. язык)</li>
+                                <li><code>morozov@school1416.ru</code> — Морозов И. Р. (биология)</li>
+                            </ul>
+                            <p class="mt-2 mb-0">Пароль для всех: <code>Teacher123!</code></p>
+                        </details>
+                    </div>
+
+                    <!-- Вход технического пользователя -->
+                    <div class="tab-pane fade" id="tab-role">
+                        <form method="post">
+                            <input type="hidden" name="kind" value="role">
+                            <p class="text-muted small">
+                                Авторизация через роли PostgreSQL.
+                                Учётные данные совпадают с ролью БД.
+                            </p>
+                            <div class="mb-3">
+                                <label class="form-label">Роль</label>
+                                <select name="username" class="form-select" required>
+                                    <option value="">— выберите —</option>
+                                    <option value="admin_db">admin_db (Администратор БД)</option>
+                                    <option value="operator_user">operator_user (Оператор)</option>
+                                    <option value="auditor_user">auditor_user (Аудитор)</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Пароль</label>
+                                <input type="password" name="password" class="form-control" required>
+                            </div>
+                            <button class="btn btn-primary w-100" type="submit">Войти</button>
+                            <details class="small text-muted mt-3">
+                                <summary>Учётные данные по умолчанию</summary>
+                                <ul class="mt-2 mb-0">
+                                    <li><code>admin_db</code> / <code>Admin123!</code></li>
+                                    <li><code>operator_user</code> / <code>Operator123!</code></li>
+                                    <li><code>auditor_user</code> / <code>Auditor123!</code></li>
+                                </ul>
+                            </details>
+                        </form>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

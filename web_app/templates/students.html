@@ -7,8 +7,7 @@
 <form class="row g-2 mb-3" method="get">
     <div class="col-md-4">
         <input type="text" name="q" class="form-control"
-               placeholder="Поиск по фамилии или имени..."
-               value="{{ search }}">
+               placeholder="Поиск по фамилии или имени..." value="{{ search }}">
     </div>
     <div class="col-md-3">
         <select name="class_id" class="form-select">
@@ -25,8 +24,7 @@
         <button class="btn btn-primary w-100">Применить</button>
     </div>
     <div class="col-md-2">
-        <a class="btn btn-outline-secondary w-100"
-           href="{{ url_for('students') }}">Сбросить</a>
+        <a class="btn btn-outline-secondary w-100" href="{{ url_for('students') }}">Сбросить</a>
     </div>
 </form>
 
@@ -69,8 +67,7 @@
                     </td>
                     {% if is_admin %}
                     <td>
-                        <form class="d-flex gap-2"
-                              method="post"
+                        <form class="d-flex gap-2" method="post"
                               action="{{ url_for('update_student_status', student_id=r.student_id) }}">
                             <select name="student_status" class="form-select form-select-sm">
                                 {% for status in statuses %}
@@ -80,18 +77,14 @@
                                 </option>
                                 {% endfor %}
                             </select>
-                            <button class="btn btn-sm btn-outline-primary">Сохранить</button>
+                            <button class="btn btn-sm btn-outline-primary">OK</button>
                         </form>
                     </td>
                     {% endif %}
                 </tr>
                 {% else %}
-                <tr>
-                    <td colspan="{% if is_admin %}9{% else %}8{% endif %}"
-                        class="text-center text-muted">
-                        Ничего не найдено
-                    </td>
-                </tr>
+                <tr><td colspan="{% if is_admin %}9{% else %}8{% endif %}"
+                        class="text-center text-muted">Ничего не найдено</td></tr>
                 {% endfor %}
             </tbody>
         </table>

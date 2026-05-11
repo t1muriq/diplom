@@ -8,7 +8,7 @@
 <div class="card mb-4">
     <div class="card-header bg-white">
         <strong>Добавить урок</strong>
-        <span class="text-muted small">конфликты класса, кабинета и преподавателя проверяет СУБД</span>
+        <span class="text-muted small">— конфликты класса, кабинета и преподавателя проверяет СУБД</span>
     </div>
     <div class="card-body">
         <form class="row g-3" method="post">
@@ -18,7 +18,8 @@
             </div>
             <div class="col-md-1">
                 <label class="form-label">Урок</label>
-                <input type="number" name="lesson_number" class="form-control" min="1" max="8" required>
+                <input type="number" name="lesson_number" class="form-control"
+                       min="1" max="8" required>
             </div>
             <div class="col-md-2">
                 <label class="form-label">Класс</label>
@@ -52,8 +53,8 @@
                     {% endfor %}
                 </select>
             </div>
-            <div class="col-md-2">
-                <button class="btn btn-success w-100">Добавить урок</button>
+            <div class="col-md-12 d-flex align-items-end">
+                <button class="btn btn-success">Добавить урок</button>
             </div>
         </form>
     </div>
@@ -94,9 +95,6 @@
                     <th>Предмет</th>
                     <th>Преподаватель</th>
                     <th>Кабинет</th>
-                    {% if is_admin or is_operator %}
-                    <th>Действия</th>
-                    {% endif %}
                 </tr>
             </thead>
             <tbody>
@@ -108,22 +106,9 @@
                     <td>{{ r.subject_name }}</td>
                     <td>{{ r.teacher_short_name }}</td>
                     <td><small>каб. {{ r.room_number }}, {{ r.building }}</small></td>
-                    {% if is_admin or is_operator %}
-                    <td>
-                        <a class="btn btn-sm btn-outline-primary"
-                           href="{{ url_for('edit_schedule', schedule_id=r.schedule_id) }}">
-                            Изменить
-                        </a>
-                    </td>
-                    {% endif %}
                 </tr>
                 {% else %}
-                <tr>
-                    <td colspan="{% if is_admin or is_operator %}7{% else %}6{% endif %}"
-                        class="text-center text-muted">
-                        Ничего не найдено
-                    </td>
-                </tr>
+                <tr><td colspan="6" class="text-center text-muted">Ничего не найдено</td></tr>
                 {% endfor %}
             </tbody>
         </table>

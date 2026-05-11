@@ -2,7 +2,25 @@
 {% block title %}Дашборд{% endblock %}
 
 {% block content %}
-<h2 class="mb-4">Дашборд</h2>
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="mb-0">Дашборд</h2>
+    <div class="btn-group">
+        <a class="btn btn-outline-success btn-sm"
+           href="{{ url_for('export_students') }}">
+            📥 Ученики (XLSX)
+        </a>
+        <a class="btn btn-outline-success btn-sm"
+           href="{{ url_for('export_import_log') }}">
+            📥 Журнал импорта (XLSX)
+        </a>
+        {% if is_admin or is_auditor %}
+        <a class="btn btn-outline-success btn-sm"
+           href="{{ url_for('export_monitoring_log') }}">
+            📥 Журнал мониторинга (XLSX)
+        </a>
+        {% endif %}
+    </div>
+</div>
 
 <div class="row g-3 mb-4">
     <div class="col-md-3 col-6">

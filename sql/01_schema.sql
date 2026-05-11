@@ -105,3 +105,19 @@ CREATE INDEX idx_grades_student_id ON grades(student_id);
 CREATE INDEX idx_grades_subject_id ON grades(subject_id);
 CREATE INDEX idx_attendance_student_id ON attendance(student_id);
 CREATE INDEX idx_confidential_data_name ON confidential_data(name);
+
+-- Таблица учётных записей учителей для входа в личный кабинет.
+-- Связана с teachers по teacher_id. Пароли хранятся в виде криптостойкого
+-- хэша через расширение pgcrypto (функция crypt с алгоритмом bcrypt).
+CREATE TABLE teacher_accounts (
+    account_id SERIAL PRIMARY KEY,
+    teacher_id INT NOT NULL UNIQUE
+        REFERENCES teachers(teacher_id) ON DELETE CASCADE,
+    email VARCHAR(150) NOT NULL UNIQUE,
+    password_hash TEXT NOT NULL,
+    is_active BOOLEAN NOT NULL DEFAULT TRUE,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    last_login_at TIMESTAMP
+);
+
+CREATE INDEX idx_teacher_accounts_email ON teacher_accounts(email);

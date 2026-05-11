@@ -1,0 +1,158 @@
+{% extends "base.html" %}
+{% block title %}Кабинет учителя{% endblock %}
+
+{% block content %}
+<h2 class="mb-1">Кабинет учителя</h2>
+<p class="text-muted">{{ teacher_full_name }}</p>
+
+<!-- Карточки-сводка -->
+<div class="row g-3 mb-4">
+    <div class="col-md-4">
+        <div class="card text-center border-primary">
+            <div class="card-body">
+                <div class="display-6 text-primary">{{ schedule_rows|length }}</div>
+                <small class="text-muted">Уроков на ближайшие 2 недели</small>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card text-center border-success">
+            <div class="card-body">
+                <div class="display-6 text-success">{{ teaching|length }}</div>
+                <small class="text-muted">Класс×предмет</small>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card text-center border-warning">
+            <div class="card-body">
+                <div class="display-6 text-warning">{{ grade_rows|length }}</div>
+                <small class="text-muted">Последних оценок</small>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Расписание -->
+<div class="card mb-4">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <strong>Моё расписание</strong>
+        <form class="d-flex gap-2 align-items-center"
+              method="get" action="{{ url_for('export_my_schedule') }}">
+            <label class="small text-muted mb-0">с</label>
+            <input type="date" name="from" class="form-control form-control-sm"
+                   value="{{ date_from }}" required>
+            <label class="small text-muted mb-0">по</label>
+            <input type="date" name="to" class="form-control form-control-sm"
+                   value="{{ date_to }}" required>
+            <button class="btn btn-sm btn-success" type="submit">
+                📥 Скачать XLSX
+            </button>
+        </form>
+    </div>
+    <div class="card-body p-0">
+        <table class="table table-sm table-hover mb-0">
+            <thead class="table-light">
+                <tr>
+                    <th>Дата</th>
+                    <th>Урок</th>
+                    <th>Класс</th>
+                    <th>Предмет</th>
+                    <th>Кабинет</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for r in schedule_rows %}
+                <tr>
+                    <td>{{ r.lesson_date.strftime('%d.%m.%Y') }}</td>
+                    <td><span class="badge bg-secondary">{{ r.lesson_number }}</span></td>
+                    <td><strong>{{ r.class_name }}</strong></td>
+                    <td>{{ r.subject_name }}</td>
+                    <td><small>каб. {{ r.room_number }}, {{ r.building }}</small></td>
+                </tr>
+                {% else %}
+                <tr><td colspan="5" class="text-center text-muted">
+                    Нет занятий в ближайшие две недели
+                </td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Выгрузки оценок -->
+<div class="card mb-4">
+    <div class="card-header">
+        <strong>Мои предметы и классы</strong>
+        <span class="text-muted small">— выгрузка ведомости в Excel</span>
+    </div>
+    <div class="card-body">
+        {% if teaching %}
+        <div class="row g-2">
+            {% for t in teaching %}
+            <div class="col-md-6 col-lg-4">
+                <a class="btn btn-outline-success w-100 text-start"
+                   href="{{ url_for('export_my_grades',
+                                    class_id=t.class_id,
+                                    subject_id=t.subject_id) }}">
+                    📥 {{ t.class_name }} — {{ t.subject_name }}
+                </a>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <p class="text-muted mb-0">У вас нет уроков в расписании.</p>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Последние оценки -->
+<div class="card">
+    <div class="card-header"><strong>Мои последние выставленные оценки</strong></div>
+    <div class="card-body p-0">
+        <table class="table table-sm table-hover mb-0">
+            <thead class="table-light">
+                <tr>
+                    <th>Дата</th>
+                    <th>Класс</th>
+                    <th>Ученик</th>
+                    <th>Предмет</th>
+                    <th>Оценка</th>
+                    <th>Комментарий</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for g in grade_rows %}
+                <tr>
+                    <td>{{ g.grade_date.strftime('%d.%m.%Y') }}</td>
+                    <td>{{ g.class_name }}</td>
+                    <td>{{ g.student_full_name }}</td>
+                    <td>{{ g.subject_name }}</td>
+                    <td>
+                        {% if g.grade_value == 5 %}
+                            <span class="badge bg-success fs-6">5</span>
+                        {% elif g.grade_value == 4 %}
+                            <span class="badge bg-primary fs-6">4</span>
+                        {% elif g.grade_value == 3 %}
+                            <span class="badge bg-warning fs-6">3</span>
+                        {% else %}
+                            <span class="badge bg-danger fs-6">{{ g.grade_value }}</span>
+                        {% endif %}
+                    </td>
+                    <td><small class="text-muted">{{ g.grade_comment or '' }}</small></td>
+                </tr>
+                {% else %}
+                <tr><td colspan="6" class="text-center text-muted">
+                    Вы ещё не выставляли оценок
+                </td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<p class="text-muted small mt-3">
+    🛡️ Все запросы фильтруются Row-Level Security в PostgreSQL: вы видите
+    только свои уроки и оценки. Это разграничение работает на уровне СУБД.
+</p>
+{% endblock %}
